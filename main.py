@@ -1,6 +1,7 @@
 import os
 import glob
 import shutil
+import keras
 from sklearn.model_selection import train_test_split
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
@@ -9,13 +10,15 @@ from models import signs_model
 
 
 if __name__ == "__main__":
-    # path_to_data = "C:\\Users\\hp\Downloads\\archive\\Train"
-    # path_to_save_train = "C:\\Users\\hp\Downloads\\archive\\training_data\\train"
-    # path_to_save_val = "C:\\Users\\hp\Downloads\\archive\\training_data\\val"
-    # split_data(path_to_data, path_to_save_train, path_to_save_val)
-    # path_to_images = "C:\\Users\\hp\Downloads\\archive\\Test"
-    # path_to_csv = "C:\\Users\\hp\Downloads\\archive\\Test.csv"
-    # order_test_set(path_to_images, path_to_csv)
+    PREPARE = False
+    if PREPARE:
+        path_to_data = "C:\\Users\\hp\Downloads\\archive\\Train"
+        path_to_save_train = "C:\\Users\\hp\Downloads\\archive\\training_data\\train"
+        path_to_save_val = "C:\\Users\\hp\Downloads\\archive\\training_data\\val"
+        split_data(path_to_data, path_to_save_train, path_to_save_val)
+        path_to_images = "C:\\Users\\hp\Downloads\\archive\\Test"
+        path_to_csv = "C:\\Users\\hp\Downloads\\archive\\Test.csv"
+        order_test_set(path_to_images, path_to_csv)
 
     path_to_train = "C:\\Users\\hp\Downloads\\archive\\training_data\\train"
     path_to_val = "C:\\Users\\hp\Downloads\\archive\\training_data\\val"
@@ -26,25 +29,38 @@ if __name__ == "__main__":
     train_generator, val_generator, test_generator = create_generators(batch_size, path_to_train, path_to_val, path_to_test)
     nbr_classes = train_generator.num_classes
 
-    path_to_save_model = './Models'
-    chkpt_saver = ModelCheckpoint(
-        path_to_save_model,
-        monitor='val_accuracy',
-        mode='max',
-        save_best_only=True,
-        save_freq='epoch',
-        verbose=1
-    )
+    TRAIN = False
+    if TRAIN:
+        path_to_save_model = './Models'
+        chkpt_saver = ModelCheckpoint(
+            path_to_save_model,
+            monitor='val_accuracy',
+            mode='max',
+            save_best_only=True,
+            save_freq='epoch',
+            verbose=1
+        )
 
-    early_stop = EarlyStopping(monitor='val_accuracy', patience=10, verbose=1)
+        early_stop = EarlyStopping(monitor='val_accuracy', patience=10, verbose=1)
 
-    model = signs_model(nbr_classes)
+        model = signs_model(nbr_classes)
 
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model.fit(train_generator,
-              epochs=epochs, 
-              batch_size=batch_size, 
-              validation_data=val_generator,
-              callbacks=[chkpt_saver, early_stop]
-            )
+        model.fit(train_generator,
+                epochs=epochs, 
+                batch_size=batch_size, 
+                validation_data=val_generator,
+                callbacks=[chkpt_saver, early_stop]
+                )
+
+    TEST = True
+    if TEST:
+        model = keras.models.load_model('./Models')
+        model.summary()
+
+        print("Evaluating Validation Set")
+        model.evaluate(val_generator)
+
+        print("Evaluating Test Set")
+        model.evaluate(test_generator)
