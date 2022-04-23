@@ -9,11 +9,9 @@
 
 ```
 python TestEmotionDetector.py
-
 ```
 or 
 
 ```
 python main.py
-
 ```
