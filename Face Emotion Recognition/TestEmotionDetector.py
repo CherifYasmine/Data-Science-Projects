@@ -17,7 +17,7 @@ print("Loaded model from disk")
 
 # start the webcam feed
 cap = cv2.VideoCapture(0)
-
+#cap = cv2.VideoCapture("C:\\Users\hp\Desktop\pexels-kampus-production-8813154.mp4")
 
 while True:
     # Find haar cascade to draw bounding box around face
