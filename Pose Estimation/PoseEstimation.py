@@ -3,8 +3,8 @@ import cv2
 import mediapipe as mp
 from numpy import imag
 
-#cap = cv2.VideoCapture('./1.mp4')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('./1.mp4')
+#cap = cv2.VideoCapture(0)
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
 mpDraw = mp.solutions.drawing_utils
